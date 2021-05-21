@@ -11,3 +11,8 @@ new Vue({
   router,
   render: (h) => h(App),
 }).$mount("#app");
+
+// Initialize the service worker
+if (navigator && navigator.serviceWorker) {
+  navigator.serviceWorker.register("./sw.js");
+}
