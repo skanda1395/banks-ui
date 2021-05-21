@@ -2,99 +2,108 @@
   <div class="container">
     <!-- Page Title -->
     <div id="title">
-      <h1 class="blue-text center-align">Bank Branches</h1>
+      <h3 class="blue-text center-align">Bank Branches</h3>
     </div>
 
     <!-- Filters -->
     <div id="filters">
       <!-- <p>Selected City: {{ selected_city }}</p> -->
       <div class="row">
-        <div class="col s12 m3">
+        <div class="col s12 m8 offset-m2">
           <!-- Dropdown -->
           <div class="input-field">
             <select v-model="selected_city" @change="fetch_banks">
               <option value="" disabled>Choose your option</option>
-              <option value="BANGALORE" selected>Bangalore</option>
-              <option value="CHENNAI">Chennai</option>
-              <option value="DELHI">Delhi</option>
-              <option value="MUMBAI">Mumbai</option>
-              <option value="VIZAG">Vizag</option>
+              <option value="Bangalore" selected>Bangalore</option>
+              <option value="Chennai">Chennai</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Vizag">Vizag</option>
             </select>
             <label>Choose City</label>
-          </div>
-        </div>
-        <div class="col s12 m8 offset-m1">
-          <!-- Search -->
-          <div class="input-field">
-            <i class="material-icons prefix">search</i>
-            <input
-              id="icon_prefix"
-              type="text"
-              class="validate"
-              @input="filter_banks"
-              v-model="search_term"
-            />
-            <label for="icon_prefix">Search Banks...</label>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Banks List -->
-    <div id="banks_list_outer_div" class="section">
-      <table
-        class="responsive-table striped centered highlight"
-        id="banks_list"
+    <div id="banks_list_outer_div">
+      <datatable
+        :title="'Banks in ' + selected_city"
+        :columns="tableColumns1"
+        :rows="banks_list"
+        v-on:row-click="onRowClick"
+        :exportable="false"
+        :printable="false"
       >
-        <thead>
-          <tr>
-            <th>Bank ID</th>
-            <th>IFSC Code</th>
-            <th>Address</th>
-            <th>District</th>
-            <th>State</th>
-            <th>City</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr v-for="bank in banks_list" :key="bank.ifsc">
-            <td>{{ bank.bank_id }}</td>
-            <td>{{ bank.ifsc }}</td>
-            <td>{{ bank.address }}</td>
-            <td>{{ bank.state }}</td>
-            <td>{{ bank.district }}</td>
-            <td>{{ bank.city }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <div v-if="isFetching" class="progress">
-        <div class="indeterminate"></div>
-      </div>
-      <!-- <p v-if="" class="red-text center-align">
-        No such banks found. Search with different value.
-      </p> -->
+      </datatable>
     </div>
   </div>
 </template>
 
 <script>
+import DataTable from "vue-materialize-datatable";
+console.log("datatable", DataTable);
+
 export default {
   data() {
     return {
-      selected_city: "BANGALORE",
-      banks_list: null,
+      selected_city: "Bangalore",
+      banks_list: [],
       search_term: "",
       isFetching: true,
+      tableColumns1: [
+        {
+          label: "Bank ID",
+          field: "bank_id",
+          numeric: false,
+          html: false,
+        },
+        {
+          label: "IFSC Code",
+          field: "ifsc",
+          numeric: false,
+          html: false,
+        },
+        {
+          label: "Address",
+          field: "address",
+          numeric: false,
+          html: false,
+        },
+        {
+          label: "State",
+          field: "state",
+          numeric: false,
+          html: false,
+        },
+        {
+          label: "District",
+          field: "district",
+          numeric: false,
+          html: false,
+        },
+        {
+          label: "City",
+          field: "city",
+          numeric: false,
+          html: false,
+        },
+      ],
     };
+  },
+  components: {
+    datatable: DataTable,
   },
   methods: {
     fetch_banks() {
+      this.banks_list = [];
+      this.isFetching = true;
       console.log("Fetching results for " + this.selected_city);
       fetch(
         "https://indian-banks-api.herokuapp.com/branches?q=" +
-          this.selected_city +
-          "&limit=5"
+          this.selected_city
+        // + "&limit=5"k
       )
         .then((res) => res.json())
         .then((result) => {
@@ -104,23 +113,12 @@ export default {
         })
         .catch((err) => console.log(err));
     },
-    filter_banks() {
-      let filter = this.search_term.toLowerCase();
-      let table = document.getElementById("banks_list");
-      let table_rows = table.tBodies[0].getElementsByTagName("tr");
-
-      for (let i = 0; i < table_rows.length; i++) {
-        let row_cells = table_rows[i].getElementsByTagName("td");
-
-        table_rows[i].style.display = "none";
-
-        for (let j = 0; j < row_cells.length; j++) {
-          if (row_cells[j].innerHTML.toLowerCase().indexOf(filter) > -1) {
-            table_rows[i].style.display = "";
-            continue;
-          }
-        }
-      }
+    onRowClick(row) {
+      console.log("Route to a new page with this bank details", row);
+      this.$router.push({
+        name: "About",
+        params: { id: row.bank_id, bank: row },
+      });
     },
   },
   created() {
@@ -130,3 +128,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.banks_table td {
+  max-width: 250px;
+}
+</style>

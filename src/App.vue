@@ -9,9 +9,10 @@ import M from "materialize-css";
 
 export default {
   mounted() {
-    // Initialize dropdown
-    var elems = document.querySelectorAll("select");
-    M.FormSelect.init(elems);
+    // Initialize everything
+    M.AutoInit();
   },
 };
 </script>
+
+<style scoped></style>
