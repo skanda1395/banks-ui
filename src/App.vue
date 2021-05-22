@@ -1,6 +1,8 @@
 <template>
   <main class="container">
-    <router-view />
+    <keep-alive>
+      <router-view />
+    </keep-alive>
   </main>
 </template>
 

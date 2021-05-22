@@ -1,4 +1,4 @@
-let API_ENDPOINT = "https://indian-banks-api.herokuapp.com/branches";
+let API_ENDPOINT = "https://vast-shore-74260.herokuapp.com/banks";
 
 // On install, cache some stuff
 self.addEventListener("install", (event) => {

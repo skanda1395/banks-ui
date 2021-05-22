@@ -7,18 +7,18 @@
 
     <!-- Filters -->
     <div id="filters">
-      <!-- <p>Selected City: {{ selected_city }}</p> -->
+      <!-- <p>Selected City: {{ city }}</p> -->
       <div class="row">
         <div class="col s12 m8 offset-m2">
           <!-- Dropdown -->
           <div class="input-field">
             <select v-model="selected_city" @change="fetch_banks">
               <option value="" disabled>Choose your option</option>
-              <option value="Bangalore" selected>Bangalore</option>
-              <option value="Chennai">Chennai</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Mumbai">Mumbai</option>
-              <option value="Vizag">Vizag</option>
+              <option value="BANGALORE" selected>Bangalore</option>
+              <option value="CHENNAI">Chennai</option>
+              <option value="DELHI">Delhi</option>
+              <option value="MUMBAI">Mumbai</option>
+              <option value="VIZAG">Vizag</option>
             </select>
             <label>Choose City</label>
           </div>
@@ -46,9 +46,10 @@ import M from "materialize-css";
 import DataTable from "vue-materialize-datatable";
 
 export default {
+  props: ["city"],
   data() {
     return {
-      selected_city: "Bangalore",
+      selected_city: "BANGALORE",
       banks_list: [],
       search_term: "",
       isFetching: true,
@@ -100,13 +101,13 @@ export default {
       this.banks_list = [];
       console.log("Fetching results for " + this.selected_city);
       fetch(
-        "https://indian-banks-api.herokuapp.com/branches?q=" +
+        "https://vast-shore-74260.herokuapp.com/banks?city=" +
           this.selected_city
         // + "&limit=5"k
       )
         .then((res) => res.json())
         .then((result) => {
-          this.banks_list = result.branches;
+          this.banks_list = result;
         })
         .catch((err) => console.log(err));
     },
