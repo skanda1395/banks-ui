@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="banks_list">
     <!-- Page Title -->
     <div id="title">
       <h3 class="blue-text center-align">Bank Branches</h3>
@@ -42,8 +42,8 @@
 </template>
 
 <script>
+import M from "materialize-css";
 import DataTable from "vue-materialize-datatable";
-console.log("datatable", DataTable);
 
 export default {
   data() {
@@ -98,7 +98,6 @@ export default {
   methods: {
     fetch_banks() {
       this.banks_list = [];
-      this.isFetching = true;
       console.log("Fetching results for " + this.selected_city);
       fetch(
         "https://indian-banks-api.herokuapp.com/branches?q=" +
@@ -108,8 +107,6 @@ export default {
         .then((res) => res.json())
         .then((result) => {
           this.banks_list = result.branches;
-          this.isFetching = false;
-          this.search_term = "";
         })
         .catch((err) => console.log(err));
     },
@@ -125,6 +122,11 @@ export default {
     // Fetch All Banks in the selected city (Default => Bangalore)
     console.log("Querying DB!");
     this.fetch_banks();
+  },
+  mounted() {
+    // Initialize everything
+    M.AutoInit();
+    console.log("App mounted");
   },
 };
 </script>
